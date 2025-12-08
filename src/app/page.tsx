@@ -1,22 +1,30 @@
 "use client";
 
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
 
 export default function Home() {
 	const [raw, setRaw] = useState<string>(() => {
-    if(localStorage)
-		  return localStorage.getItem("savedJson") ?? "";
+		if (typeof window !== "undefined") {
+			return localStorage.getItem("savedJson") ?? "";
+		}
 		return "";
 	});
+
 	const [debouncedRaw] = useDebounce(raw, 300);
 
 	function updateJsonInput(e: ChangeEvent<HTMLTextAreaElement>) {
 		setRaw(e.target.value);
 	}
 
+	// save JSON safely
+	useEffect(() => {
+		if (typeof window !== "undefined" && debouncedRaw != null) {
+			localStorage.setItem("savedJson", debouncedRaw);
+		}
+	}, [debouncedRaw]);
+
 	const { formatted, error } = useMemo(() => {
-		saveJson();
 		const text = debouncedRaw ?? "";
 
 		if (!text.trim()) {
@@ -28,16 +36,10 @@ export default function Home() {
 			const formattedJson = JSON.stringify(parsedJson, null, 2);
 			return { formatted: formattedJson, error: "" };
 		} catch (err) {
-			console.log(err);
-
 			const message = err instanceof Error ? err.message : "Invalid JSON input";
 			return { formatted: "", error: message };
 		}
 	}, [debouncedRaw]);
-
-	function saveJson() {
-		if (debouncedRaw) localStorage.setItem("savedJson", debouncedRaw);
-	}
 
 	return (
 		<div className="flex items-center justify-center p-4 overflow-clip font-semibold text-lg">
