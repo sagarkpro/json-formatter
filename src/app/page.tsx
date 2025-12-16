@@ -3,9 +3,15 @@
 import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState, useEffect } from "react";
-import { FaCheck,  FaXmark } from "react-icons/fa6";
-import ReactJson from "react-json-view";
+import { FaCheck, FaXmark } from "react-icons/fa6";
 import { toast } from "sonner";
+
+import dynamic from "next/dynamic";
+
+const ReactJson = dynamic(
+  () => import("react-json-view"),
+  { ssr: false }
+);
 
 export default function Home() {
 	const githubDarkJsonTheme = {
@@ -134,7 +140,7 @@ export default function Home() {
 							{/* Fake input */}
 							<label htmlFor="json-file" className="flex items-center gap-x-2 bg-off-white rounded-2xl py-1 px-4 text-black cursor-pointer min-w-max">
 								{file ? file.name : "Upload File"}
-								{loading && <Spinner/>}
+								{loading && <Spinner />}
 							</label>
 						</TooltipTrigger>
 						<TooltipContent className="bg-off-white rounded-2xl font-semibold">
