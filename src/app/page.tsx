@@ -57,7 +57,6 @@ export default function Home() {
 
 			const formData = new FormData();
 			formData.append("jsonFile", file);
-			formData.append("fileName", file.name);
 
 			const res = await fetch("https://api.cursedshrine.co.in/api/json-formatter/format-file", {
 				method: "POST",
@@ -83,6 +82,9 @@ export default function Home() {
 				document.body.removeChild(link);
 				window.URL.revokeObjectURL(url);
 				setLoading(false);
+			}
+			else{
+				toast("Something went wrong")
 			}
 		} catch (err) {
 			console.log("Error: ", err);
